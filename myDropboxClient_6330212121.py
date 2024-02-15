@@ -2,9 +2,14 @@ import boto3
 import json
 import requests
 import base64
-import os
 from dotenv import load_dotenv
-API_GATEWAY = os.getenv("API_GATEWAY") + '/act5v2/api/v1'
+import os
+
+# Load environment variables from .env file
+load_dotenv()
+API_GATEWAY = os.getenv("API_GATEWAY")
+PATH='/act5v2/api/v1'
+HEADERS = {'Content-Type': 'application/json'}
 def get_file_content_base64(file_path):
     """Reads a file and returns its base64 encoded content."""
     try:
@@ -16,17 +21,19 @@ def get_file_content_base64(file_path):
         return None
 def make_api_request(method, endpoint, data=None):
     """Makes an API request and returns the response status code and content."""
-    url = f"{GATEWAY}/{endpoint}"
-    print(url)
+    url = f"{API_GATEWAY+PATH}/{endpoint}"
+    print('REST->',url)
+    print('data->',data)
     headers = {'Content-Type': 'application/json'}
+    
     try:
-        response = requests.request(method, url, headers=headers, json=data)
+        response = requests.request(method=method, url=url, headers=headers, json=data)
         response.raise_for_status()
         return response.status_code, response.json()
     except requests.exceptions.RequestException as e:
         print(f"Error making API request: {e}")
         return None, None
-
+    
 def put(file_name):
     """Uploads a file to the API."""
     file_path = f"./{file_name}"
@@ -36,16 +43,16 @@ def put(file_name):
         return
 
     data = {
-        'owner': "p",  
-        'file_name': file_name,
-        'file': file_content
+        "owner": "tumrabert",  
+        "file_name": file_name,
+        "file_object": file_content
     }
 
     status_code, _ = make_api_request('PUT', 'put', data)
     if status_code == 200:
         print("File uploaded successfully.")
 
-def view(owner="p"):
+def view(owner="tumrabert"):
     # Assuming 'view' can be called with a GET request without parameters
     if not owner:
         print("Owner's name cannot be empty.")
@@ -54,8 +61,7 @@ def view(owner="p"):
     status_code, files = make_api_request('GET', 'view', data)
     print(files,type(files))
     if status_code == 200 and files:
-        for file in files['files']:
-            print(file)
+        print(files)
     else:
         print("No files found for this owner.")
 
@@ -98,10 +104,14 @@ Please input command (newuser username password password, login
 username password, put filename, get filename, view, or logout). 
 If you want to quit the program just type quit.
 ======================================================''')
-ip=input().split()
+ip=input(">>").split()
 
 while(ip[0]!='quit'):
-    ip=input().split()
+    
+    if(ip[0]not in ['newuser','login','put','get','view','logout']):
+        continue
     select_function(ip)
+    ip=input(">>").split()
 print("======================================================")
+
 
