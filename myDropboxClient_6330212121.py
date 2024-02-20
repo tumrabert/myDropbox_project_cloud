@@ -1,7 +1,7 @@
 import requests
 import base64
-import os
 from dotenv import load_dotenv
+<<<<<<< HEAD
 import hashlib
 
 
@@ -21,6 +21,15 @@ def hash_password(password):
     return hashed_password
 
 
+=======
+import os
+
+# Load environment variables from .env file
+load_dotenv()
+API_GATEWAY = os.getenv("API_GATEWAY")
+PATH='/act5v2/api/v1'
+HEADERS = {'Content-Type': 'application/json'}
+>>>>>>> b9319fc4c25aa0d547c3579e5e179a0c88c59abe
 def get_file_content_base64(file_path):
     """Reads a file and returns its base64 encoded content."""
     try:
@@ -35,17 +44,29 @@ def get_file_content_base64(file_path):
 
 def make_api_request(method, endpoint, data=None):
     """Makes an API request and returns the response status code and content."""
+<<<<<<< HEAD
     url = f"{API_GATEWAY}/{endpoint}"
+=======
+    url = f"{API_GATEWAY+PATH}/{endpoint}"
+    print('REST->',url)
+    print('data->',data)
+>>>>>>> b9319fc4c25aa0d547c3579e5e179a0c88c59abe
     headers = {'Content-Type': 'application/json'}
+    
     try:
-        response = requests.request(method, url, headers=headers, json=data)
+        response = requests.request(method=method, url=url, headers=headers, json=data)
         response.raise_for_status()
         return response.status_code, response.json()
     except requests.exceptions.RequestException as e:
         print(f"Error making API request: {e}")
         return None, None
+<<<<<<< HEAD
 
 def put(file_name,owner):
+=======
+    
+def put(file_name):
+>>>>>>> b9319fc4c25aa0d547c3579e5e179a0c88c59abe
     """Uploads a file to the API."""
     file_path = f"./{file_name}"
     file_content = get_file_content_base64(file_path)
@@ -54,9 +75,15 @@ def put(file_name,owner):
         return False
 
     data = {
+<<<<<<< HEAD
         'owner': owner,
         'file_name': file_name,
         'file': file_content
+=======
+        "owner": "tumrabert",  
+        "file_name": file_name,
+        "file_object": file_content
+>>>>>>> b9319fc4c25aa0d547c3579e5e179a0c88c59abe
     }
 
     status_code, _ = make_api_request('PUT', 'put', data)
@@ -67,8 +94,13 @@ def put(file_name,owner):
         print("Error uploading file.")
         return False
 
+<<<<<<< HEAD
 def view(owner):
     """Lists files associated with the specified owner."""
+=======
+def view(owner="tumrabert"):
+    # Assuming 'view' can be called with a GET request without parameters
+>>>>>>> b9319fc4c25aa0d547c3579e5e179a0c88c59abe
     if not owner:
         print("Owner's name cannot be empty.")
         return False
@@ -76,9 +108,13 @@ def view(owner):
     data = {'owner': owner}
     status_code, files = make_api_request('GET', 'view', data)
     if status_code == 200 and files:
+<<<<<<< HEAD
         for file in files['files']:
             print(file)
         return True
+=======
+        print(files)
+>>>>>>> b9319fc4c25aa0d547c3579e5e179a0c88c59abe
     else:
         print("No files found for this owner.")
         return False
@@ -220,6 +256,7 @@ def main():
         if command == 'quit':
             break
 
+<<<<<<< HEAD
         if command not in ['newuser', 'login', 'put', 'get', 'view', 'logout', 'share']:
             print("Please input a correct command.")
             continue
@@ -271,3 +308,22 @@ def main():
 
 if __name__ == "__main__":
     main()
+=======
+print("welcome to myDropbox Application")
+print('''======================================================
+Please input command (newuser username password password, login 
+username password, put filename, get filename, view, or logout). 
+If you want to quit the program just type quit.
+======================================================''')
+ip=input(">>").split()
+
+while(ip[0]!='quit'):
+    
+    if(ip[0]not in ['newuser','login','put','get','view','logout']):
+        continue
+    select_function(ip)
+    ip=input(">>").split()
+print("======================================================")
+
+
+>>>>>>> b9319fc4c25aa0d547c3579e5e179a0c88c59abe
